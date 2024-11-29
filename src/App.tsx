@@ -1,33 +1,48 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState, useEffect, useRef } from 'react'
 import './App.css'
+import {init as initDynamsoft, initDocDetectModule} from './dynamsoft.config'
+import Scanner from './components/Scanner';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const initializing = useRef(false);
+  const [isScanning,setIsScanning] = useState(false);
+  const [initialized,setInitialized] = useState(false);
+  useEffect(()=>{
+    if (initializing.current == false) {
+      initializing.current = true;
+      initialize();
+    }
+  },[])
+
+  const initialize = async () => {
+    await initDynamsoft();
+    await initDocDetectModule();
+    setInitialized(true);
+  }
+
+  const startScanning = () => {
+    setIsScanning(true);
+  }
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+      <h1>Scan to PDF</h1>
+      {initialized && (
+        <button onClick={startScanning}>
+          Start Scanning
         </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+      )}
+      {!initialized && (
+        <div>Initializing...</div>
+      )}
+      {isScanning&& (
+        <div id="scanner">
+          <Scanner></Scanner>
+        </div>
+      )}
+      <div style={{marginTop:"2em"}}>
+        Powered by <a href='https://www.dynamsoft.com' target='_blank'>Dynamsoft</a>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   )
 }
