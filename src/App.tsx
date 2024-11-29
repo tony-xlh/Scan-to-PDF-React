@@ -20,16 +20,16 @@ function App() {
     setInitialized(true);
   }
 
-  const startScanning = () => {
-    setIsScanning(true);
+  const toggleScanning = () => {
+    setIsScanning(!isScanning);
   }
 
   return (
     <>
       <h1>Scan to PDF</h1>
       {initialized && (
-        <button onClick={startScanning}>
-          Start Scanning
+        <button onClick={toggleScanning}>
+          {isScanning ? "Stop Scanning" : "Start Scanning"}
         </button>
       )}
       {!initialized && (
