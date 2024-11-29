@@ -5,7 +5,12 @@ import { DDV, EditViewer, PerspectiveViewer, CaptureViewer, UiConfig } from 'dyn
 import "dynamsoft-document-viewer/dist/ddv.css";
 import "./Scanner.css";
 
-const Scanner: React.FC = () => {
+export interface ScannerProps {
+  cameraID?: string;
+  onInitialized?: (captureViewer:CaptureViewer,editViewer:EditViewer,perspectiveViewer:PerspectiveViewer) => void;
+}
+
+const Scanner: React.FC<ScannerProps> = (props:ScannerProps) => {
   const initializing = useRef(false);
   const captureViewer = useRef<CaptureViewer|undefined>();
   const editViewer = useRef<EditViewer|undefined>();
@@ -14,9 +19,19 @@ const Scanner: React.FC = () => {
     if (initializing.current == false) {
       initializing.current = true;
       init();
-      captureViewer.current!.play();
     }
   },[])
+
+  useEffect(()=>{
+    selectCamera();
+  },[props.cameraID])
+
+  const selectCamera = async () => {
+    if (captureViewer.current && props.cameraID) {
+      await captureViewer.current.getAllCameras();
+      captureViewer.current.selectCamera(props.cameraID);
+    }
+  }
 
   const initCaptureViewer = () => {
     const captureViewerUiConfig:UiConfig = {
@@ -176,11 +191,19 @@ const Scanner: React.FC = () => {
     perspectiveViewer.current.hide();
   }
 
-  const init = () => {    
+  const init = async () => {    
     initCaptureViewer();
     initPerspectiveViewer();
     initEditViewer();
     registerEvenets();
+    console.log(props.cameraID);
+    if (props.cameraID) {
+      await selectCamera();
+    }
+    captureViewer.current!.play();
+    if (props.onInitialized) {
+      props.onInitialized(captureViewer.current!,editViewer.current!,perspectiveViewer.current!);
+    }
   }
 
   const registerEvenets = () => {
