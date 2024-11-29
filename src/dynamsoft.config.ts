@@ -17,9 +17,8 @@ export async function init(){
     console.log("Initializing...");
     //set the license for Dynamsoft Document Viewer and Dynamsoft Document Normalizer. Use one-day trial by default.
     //apply your license here: https://www.dynamsoft.com/customer/license/trialLicense/?product=mwc
-    DDV.Core.license = "DLS2eyJoYW5kc2hha2VDb2RlIjoiMjAwMDAxLTE2NDk4Mjk3OTI2MzUiLCJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSIsInNlc3Npb25QYXNzd29yZCI6IndTcGR6Vm05WDJrcEQ5YUoifQ==";
-    await LicenseManager.initLicense("DLS2eyJoYW5kc2hha2VDb2RlIjoiMjAwMDAxLTE2NDk4Mjk3OTI2MzUiLCJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSIsInNlc3Npb25QYXNzd29yZCI6IndTcGR6Vm05WDJrcEQ5YUoifQ==");
     CoreModule.engineResourcePaths.rootDirectory = "https://cdn.jsdelivr.net/npm/";
+    await LicenseManager.initLicense("DLS2eyJoYW5kc2hha2VDb2RlIjoiMjAwMDAxLTE2NDk4Mjk3OTI2MzUiLCJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSIsInNlc3Npb25QYXNzd29yZCI6IndTcGR6Vm05WDJrcEQ5YUoifQ==",{executeNow:true});
     await CoreModule.loadWasm(["DDN"]).catch((ex: Error) => {
       const errMsg = ex.message || ex;
       console.error(errMsg);
