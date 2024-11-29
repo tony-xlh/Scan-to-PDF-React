@@ -5,7 +5,12 @@ import { DDV, EditViewer, PerspectiveViewer, CaptureViewer, UiConfig } from 'dyn
 import "dynamsoft-document-viewer/dist/ddv.css";
 import "./Scanner.css";
 
-const Scanner: React.FC = () => {
+export interface ScannerProps {
+  cameraID?: string;
+  onInitialized?: (captureViewer:CaptureViewer,editViewer:EditViewer,perspectiveViewer:PerspectiveViewer) => void;
+}
+
+const Scanner: React.FC<ScannerProps> = (props:ScannerProps) => {
   const initializing = useRef(false);
   const captureViewer = useRef<CaptureViewer|undefined>();
   const editViewer = useRef<EditViewer|undefined>();
@@ -14,7 +19,13 @@ const Scanner: React.FC = () => {
     if (initializing.current == false) {
       initializing.current = true;
       init();
+      if (props.cameraID) {
+        captureViewer.current!.selectCamera(props.cameraID);
+      }
       captureViewer.current!.play();
+      if (props.onInitialized) {
+        props.onInitialized(captureViewer.current!,editViewer.current!,perspectiveViewer.current!);
+      }
     }
   },[])
 
