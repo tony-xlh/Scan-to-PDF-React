@@ -12,26 +12,27 @@ export interface ScannerProps {
 
 const Scanner: React.FC<ScannerProps> = (props:ScannerProps) => {
   const initializing = useRef(false);
+  const initialized = useRef(false);
   const captureViewer = useRef<CaptureViewer|undefined>();
   const editViewer = useRef<EditViewer|undefined>();
   const perspectiveViewer = useRef<PerspectiveViewer|undefined>();
   useEffect(()=>{
-    if (initializing.current == false) {
+    if (initializing.current === false) {
       initializing.current = true;
       init();
     }
   },[])
 
-  useEffect(()=>{
-    selectCamera();
-  },[props.cameraID])
-
   const selectCamera = async () => {
-    if (captureViewer.current && props.cameraID) {
+    if (initialized.current && captureViewer.current && props.cameraID) {
       await captureViewer.current.getAllCameras();
-      captureViewer.current.selectCamera(props.cameraID);
+      await captureViewer.current.selectCamera(props.cameraID);
     }
   }
+
+  useEffect(()=>{
+    selectCamera();
+  },[props.cameraID, selectCamera])
 
   const initCaptureViewer = () => {
     const captureViewerUiConfig:UiConfig = {
@@ -197,6 +198,7 @@ const Scanner: React.FC<ScannerProps> = (props:ScannerProps) => {
     initEditViewer();
     registerEvenets();
     console.log(props.cameraID);
+    initialized.current = true;
     if (props.cameraID) {
       await selectCamera();
     }
