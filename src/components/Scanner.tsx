@@ -19,15 +19,19 @@ const Scanner: React.FC<ScannerProps> = (props:ScannerProps) => {
     if (initializing.current == false) {
       initializing.current = true;
       init();
-      if (props.cameraID) {
-        captureViewer.current!.selectCamera(props.cameraID);
-      }
-      captureViewer.current!.play();
-      if (props.onInitialized) {
-        props.onInitialized(captureViewer.current!,editViewer.current!,perspectiveViewer.current!);
-      }
     }
   },[])
+
+  useEffect(()=>{
+    selectCamera();
+  },[props.cameraID])
+
+  const selectCamera = async () => {
+    if (captureViewer.current && props.cameraID) {
+      await captureViewer.current.getAllCameras();
+      captureViewer.current.selectCamera(props.cameraID);
+    }
+  }
 
   const initCaptureViewer = () => {
     const captureViewerUiConfig:UiConfig = {
@@ -187,11 +191,19 @@ const Scanner: React.FC<ScannerProps> = (props:ScannerProps) => {
     perspectiveViewer.current.hide();
   }
 
-  const init = () => {    
+  const init = async () => {    
     initCaptureViewer();
     initPerspectiveViewer();
     initEditViewer();
     registerEvenets();
+    console.log(props.cameraID);
+    if (props.cameraID) {
+      await selectCamera();
+    }
+    captureViewer.current!.play();
+    if (props.onInitialized) {
+      props.onInitialized(captureViewer.current!,editViewer.current!,perspectiveViewer.current!);
+    }
   }
 
   const registerEvenets = () => {
