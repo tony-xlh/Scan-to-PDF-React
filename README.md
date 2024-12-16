@@ -11,7 +11,7 @@ npm install
 npm run dev
 ```
 
-## License Applicatoin
+## License Application
 
 You can apply for a license [here](https://www.dynamsoft.com/customer/license/trialLicense/?product=dcv&package=cross-platform).
 
